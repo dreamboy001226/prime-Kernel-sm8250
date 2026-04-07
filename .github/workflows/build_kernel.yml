@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        device: [x1q, y2q]
+        device: [y2q]
 
     steps:
       - name: Checkout repository
