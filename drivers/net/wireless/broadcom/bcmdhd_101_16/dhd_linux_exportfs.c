@@ -39,31 +39,12 @@
 
 #ifdef SHOW_LOGTRACE
 extern dhd_pub_t* g_dhd_pub;
-static int dhd_ring_proc_open(struct inode *inode, struct file *file);
 ssize_t dhd_ring_proc_read(struct file *file, char *buffer, size_t tt, loff_t *loff);
 
-static const struct file_operations dhd_ring_proc_fops = {
-	.open = dhd_ring_proc_open,
-	.read = dhd_ring_proc_read,
-	.release = single_release,
+static const struct proc_ops dhd_ring_proc_fops = {
+	.proc_read = dhd_ring_proc_read,
+	.proc_release = single_release,
 };
-
-static int
-dhd_ring_proc_open(struct inode *inode, struct file *file)
-{
-	int ret = BCME_ERROR;
-	if (inode) {
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 10, 0))
-		ret = single_open(file, 0, PDE_DATA(inode));
-#else
-		/* This feature is not supported for lower kernel versions */
-		ret = single_open(file, 0, NULL);
-#endif
-	} else {
-		DHD_ERROR(("%s: inode is NULL\n", __FUNCTION__));
-	}
-	return ret;
-}
 
 ssize_t
 dhd_ring_proc_read(struct file *file, char __user *buffer, size_t tt, loff_t *loff)
