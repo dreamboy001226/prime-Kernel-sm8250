@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export DEVICE=$1
+export DEVICE=y2q
 
 build_kernel() {
     echo "-----------------------------------------------"
@@ -14,7 +14,7 @@ build_kernel() {
 
     BUILD_VAR="-j$(nproc) -C $(pwd) O=$(pwd)/out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1"
 
-    cat arch/arm64/configs/vendor/kona-sec-perf_defconfig arch/arm64/configs/vendor/samsung/${DEVICE}.config > arch/arm64/configs/temp_defconfig
+    cat arch/arm64/configs/vendor/kona-sec-perf_defconfig arch/arm64/configs/vendor/samsung/y2q.config > arch/arm64/configs/temp_defconfig
 
     echo "
     CONFIG_THINLTO=y
@@ -43,7 +43,7 @@ build_dtbo() {
     echo "-----------------------------------------------"
     echo "Building dtbo.img..."
     echo "-----------------------------------------------"
-    DTBO_FILES=$(find $(pwd)/out/arch/arm64/boot/dts/samsung/${DEVICE} -name kona-sec-${DEVICE}-*.dtbo)
+    DTBO_FILES=$(find $(pwd)/out/arch/arm64/boot/dts/samsung/y2q -name kona-sec-y2q-*.dtbo)
     $(pwd)/tools/mkdtimg create $(pwd)/out/dtbo.img --page_size=4096 ${DTBO_FILES}
 
     mv $(pwd)/out/dtbo.img dtbo.img
