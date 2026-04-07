@@ -2,22 +2,15 @@ name: Build paradigm kernel
 
 on:
   workflow_dispatch:
-    inputs:
-      release:
-          description: 'Upload release'
-          type: boolean
-          required: true
-          default: false
-      changelog:
-          description: 'Changelog'
-          type: string
-          required: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        device: [x1q, y2q]
+
     steps:
-      # 1. Checkout repository with submodules (shallow clone)
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
@@ -47,34 +40,10 @@ jobs:
       - name: Build kernel
         run: |
           chmod +x build.sh
-          bash build.sh
+          bash build.sh "${{ matrix.device }}"
 
-      - name: Generate release version
-        id: ts
-        run: |
-          echo "RELEASE_TS=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
-          : > version.txt
-          echo "**Kernel version:** $(cat out/include/config/kernel.release)  " >> version.txt
-          echo >> version.txt
-          export KHASH="$(git rev-parse HEAD)"
-          echo "**Kernel source:** [$KHASH](https://github.com/pascua28/android_kernel_samsung_sm8250/tree/$KHASH)" >> version.txt
-
-          if [ "${{ github.event.inputs.release }}" = "true" ] && \
-             [ -n "${{ github.event.inputs.changelog }}" ]; then
-            echo >> version.txt
-            echo "**Changelog:**" >> version.txt
-            echo >> version.txt
-            printf "%b\n" "${{ github.event.inputs.changelog }}" >> version.txt
-          fi
-
-      # 3. Upload the generated boot.img
-      - name: Upload release assets
-        if: github.event.inputs.release
-        run: |
-          gh release create "${{ env.RELEASE_TS }}" \
-            boot.img dtbo.img \
-            --repo pascua28/kernel_samsung_r8q \
-            --title "ParadigmKernel-${{ env.RELEASE_TS }}" \
-            --notes-file version.txt
-        env:
-          GH_TOKEN: ${{ secrets.PARADIGM_R8Q }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: PrimeKernel-${{ matrix.device }}
+          path: "*.zip"
