@@ -145,4 +145,9 @@ source "drivers/net/wireless/cnss2/Kconfig"
 source "drivers/net/wireless/cnss_utils/Kconfig"
 source "drivers/net/wireless/cnss_genl/Kconfig"
 
+if NO_QCACLD
+source "drivers/net/wireless/qualcomm/qca6390/qcacld-3.0/Kconfig"
+endif
+
+
 endif # WLAN
