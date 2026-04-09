@@ -268,4 +268,30 @@ config BCMDHD_GET_OOB_STATE
 	Support WLAN_HOST_WAKE pin level information
 
 config WLAN_BCM4375_ADVANCED_FEATURES
-	bool "Support BCM4375 Advanced
+	bool "Support BCM4375 Advanced"
+bool "Support BCM4375 Advanced Feature"
+	depends on BCM4375
+	default n
+	help
+	Support BCM4375 Advanced Feature
+
+config WLAN_SOFTAP_HE_ENABLE
+	bool "Support BCM4375 SoftAP HE enable"
+	depends on BCM4375
+	default n
+	help
+	Support BCM4375 SoftAP HE Feature
+
+config WLAN_ANQP_RMAC_BACKPORTED
+	bool "Support backported kernel ANQP Random MAC Feature"
+	depends on BROADCOM_WIFI
+	default n
+	help
+	Support backported kernel ANQP Random MAC Feature
+
+config WLAN_MERLOT
+	bool "Merlot"
+	depends on BCM43013
+	default n
+	help
+	Support Merlot
