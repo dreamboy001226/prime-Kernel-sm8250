@@ -15,14 +15,13 @@ build_kernel() {
 
     BUILD_VAR="-j$(nproc) -C $(pwd) O=$(pwd)/out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1"
 
-    cat arch/arm64/configs/vendor/kona-sec-perf_defconfig arch/arm64/configs/vendor/samsung/$DEVICE.config \
+    cat arch/arm64/configs/vendor/kona-not_defonfig arch/arm64/configs/vendor/samsung/$DEVICE.config \
         arch/arm64/configs/ksu.config > arch/arm64/configs/temp_defconfig
 
     echo "
 CONFIG_THINLTO=y
 # CONFIG_LTO_NONE is not set
 CONFIG_LTO_CLANG=y
-# CONFIG_CC_WERROR is not set
 
 CONFIG_LOCALVERSION="-PrimeKernel"
     " >> arch/arm64/configs/temp_defconfig
