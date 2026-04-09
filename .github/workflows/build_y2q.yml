@@ -1,0 +1,59 @@
+name: build prime Kernel sm8250
+
+on:
+  push:
+    branches: [ "prime-kernel-y2q-saved" ]
+  workflow_dispatch:
+
+jobs:
+  build-kernel:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        device: [y2q]
+
+    env:
+      DEVICE_NAME: Galaxy S20 Series
+      KERNEL_NAME: Prime_Core
+
+    steps:
+      - name: Check Out
+        uses: actions/checkout@v3
+
+      - name: Set Timezone
+        uses: szenius/set-timezone@v1.2
+        with:
+          timezoneLinux: "America/Sao_Paulo"
+
+      - name: Setting up the environment
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y gcc-aarch64-linux-gnu bc flex bison libssl-dev libncurses5-dev zip clang lld
+
+      - name: Set Build Start Time
+        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Make build script executable
+        run: chmod +x build-${{ matrix.device }}.sh
+
+      - name: Run build script
+        run: ./build-${{ matrix.device }}.sh
+
+      - name: Set Build End Time
+        run: echo "END_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Calculate Build Duration
+        run: |
+          duration=$((END_TIME - START_TIME))
+          minutes=$((duration / 60))
+          seconds=$((duration % 60))
+          echo "BUILD_DURATION=${minutes}m ${seconds}s" >> $GITHUB_ENV
+
+      - name: Upload Kernel Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Astro_Core_Kernel_${{ matrix.device }}
+          path: |
+            out/*.zip
+            *.zip
