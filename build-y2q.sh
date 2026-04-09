@@ -12,7 +12,7 @@ AK3_REPO="https://github.com/dreamboy001226/AnyKernel3.git"
 AK3_BRANCH="y2q"
 AK3_DIR="$(pwd)/android/AnyKernel3"
 
-ZIPNAME="not-CI-$(date '+%Y%m%d').zip"
+ZIPNAME="prime-kernel-$(date '+%Y%m%d').zip"
 TC_DIR="$(pwd)/tc/clang-r522817"
 DEFCONFIG="vendor/kona-not_defconfig vendor/samsung/kona-sec-not.config vendor/samsung/y2q.config"
 
