@@ -1,59 +1,42 @@
-name: build prime Kernel sm8250
+name: Build prime kernel
 
 on:
-  push:
-    branches: [ "prime-kernel-y2q-saved" ]
   workflow_dispatch:
 
 jobs:
-  build-kernel:
+  build:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         device: [y2q]
 
-    env:
-      DEVICE_NAME: Galaxy S20 Series
-      KERNEL_NAME: Prime_Core
-
     steps:
-      - name: Check Out
-        uses: actions/checkout@v3
-
-      - name: Set Timezone
-        uses: szenius/set-timezone@v1.2
+      - name: Checkout repository
+        uses: actions/checkout@v5
         with:
-          timezoneLinux: "America/Sao_Paulo"
+          submodules: true
+          fetch-depth: 1
 
-      - name: Setting up the environment
+      - name: Install build tools
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y gcc-aarch64-linux-gnu bc flex bison libssl-dev libncurses5-dev zip clang lld
+          sudo apt-get install -y \
+            build-essential \
+            git \
+            curl \
+            unzip \
+            wget \
+            zip \
+            zstd
 
-      - name: Set Build Start Time
-        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+      
 
-      - name: Make build script executable
-        run: chmod +x build-${{ matrix.device }}.sh
-
-      - name: Run build script
-        run: ./build-${{ matrix.device }}.sh
-
-      - name: Set Build End Time
-        run: echo "END_TIME=$(date +%s)" >> $GITHUB_ENV
-
-      - name: Calculate Build Duration
+      - name: Build kernel
         run: |
-          duration=$((END_TIME - START_TIME))
-          minutes=$((duration / 60))
-          seconds=$((duration % 60))
-          echo "BUILD_DURATION=${minutes}m ${seconds}s" >> $GITHUB_ENV
+          chmod +x build-y2q.sh
+          bash build-y2q.sh "${{ matrix.device }}"
 
-      - name: Upload Kernel Artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Astro_Core_Kernel_${{ matrix.device }}
-          path: |
-            out/*.zip
-            *.zip
+          name: PrimeKernel-${{ matrix.device }}
+          path: "*.zip"
